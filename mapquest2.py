@@ -1,5 +1,3 @@
-from tkinter.messagebox import YES
-from turtle import goto
 import urllib.parse
 import requests
 
