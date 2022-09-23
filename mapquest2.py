@@ -1,6 +1,5 @@
 import urllib.parse
 import requests
-#Asdasd
 main_api = "https://www.mapquestapi.com/directions/v2/route?"
 key = "8pZqf042uMGvHGAFMxCssCSCx7z6Znyv"
 
