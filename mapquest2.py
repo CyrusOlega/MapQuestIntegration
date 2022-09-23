@@ -1,64 +1,87 @@
-#asdasdas
-#asdad
-
+from tkinter.messagebox import YES
+from turtle import goto
 import urllib.parse
 import requests
 
 main_api = "https://www.mapquestapi.com/directions/v2/route?"
 key = "8pZqf042uMGvHGAFMxCssCSCx7z6Znyv"
 
+
+
+
+orig = input("Starting Location: ")
+dest = input("Destination: ")
+ 
+
+
+ 
+url = main_api + urllib.parse.urlencode({"key": key, "from":orig, "to":dest, "routeType": "shortest"})
+print("URL: " + (url))
+json_data = requests.get(url).json()
+json_status = json_data["info"]["statuscode"]
+
 while True:
-
-
- orig = input("Starting Location: ")
- if orig == "quit" or orig == "q":
-    break
- dest = input("Destination: ")
- if dest == "quit" or dest == "q":
-    break
-
- 
- url = main_api + urllib.parse.urlencode({"key": key, "from":orig, "to":dest, "routeType": "shortest"})
- print("URL: " + (url))
- json_data = requests.get(url).json()
- json_status = json_data["info"]["statuscode"]
-
+ print("_________MENU_________")
+ print("[1] Trip Duration ")
+ print("[2] Distance ")
+ print("[3] Fuel used ")
+ print("[4] Directions")
+ print("[5] Display all information")
+ print("[6] Try different location")
+ print("[7] Quit")
  print("")
- print("MENU")
- print("1. Trip duration only")
- print("2. Distance only")
- print("3. Fuel used only")
- print("4. Display all")
+ choice = input("Choose One Input only: ")
  print("")
-
- choice = input("Choose 1 only: ")
- 
- if choice == "1":
+ if choice == "7":
+    break
+ if choice == "1":  
   if json_status == 0:
     
     print("Trip Duration: " + (json_data["route"]["formattedTime"]))
+    print("")
+    print("")
  
  if choice == "2":
   if json_status == 0:
-     print("Kilometers: " + str("{:.2f}".format((json_data["route"]["distance"])*1.61)))
+    print("Kilometers: " + str("{:.2f}".format((json_data["route"]["distance"])*1.61)))
+    print("")
+    print("")
   
  if choice == "3":
   if json_status == 0:
     print("Fuel Used (Ltr): " + str("{:.2f}".format((json_data["route"]["fuelUsed"])*3.78)))
- 
-
+    print("")
+    print("")
  if choice == "4":
   if json_status == 0:
-      print("API Status: " + str(json_status) + " = A successful route call.\n")
-      print("=============================================")
-      print("Directions from " + (orig) + " to " + (dest))
-      print("Trip Duration: " + (json_data["route"]["formattedTime"]))
-      print("Kilometers: " + str("{:.2f}".format((json_data["route"]["distance"])*1.61)))
-      print("Fuel Used (Ltr): " + str("{:.2f}".format((json_data["route"]["fuelUsed"])*3.78)))
-      print("=============================================")
-      for each in json_data["route"]["legs"][0]["maneuvers"]:
-          print((each["narrative"]) + " (" + str("{:.2f}".format((each["distance"])*1.61) + " km)"))
+     for each in json_data["route"]["legs"][0]["maneuvers"]:
+      print((each["narrative"]) + " (" + str("{:.2f}".format((each["distance"])*1.61) + " km)"))
       print("=============================================\n")
+      print("")
+      print("")
+ if choice == "5":
+  if json_status == 0:
+    print("API Status: " + str(json_status) + " = A successful route call.\n")
+    print("=============================================")
+    print("Directions from " + (orig) + " to " + (dest))
+    print("Trip Duration: " + (json_data["route"]["formattedTime"]))
+    print("Kilometers: " + str("{:.2f}".format((json_data["route"]["distance"])*1.61)))
+    print("Fuel Used (Ltr): " + str("{:.2f}".format((json_data["route"]["fuelUsed"])*3.78)))
+    print("=============================================")
+    print("")
+    for each in json_data["route"]["legs"][0]["maneuvers"]:
+      print((each["narrative"]) + " (" + str("{:.2f}".format((each["distance"])*1.61) + " km)"))
+      print("=============================================\n")
+      print("")
+      print("")
+ if choice == "6":
+  if json_status == 0:
+        orig = input("Starting Location: ")
+        dest = input("Destination: ")
+        url = main_api + urllib.parse.urlencode({"key": key, "from":orig, "to":dest, "routeType": "shortest"})
+        print("URL: " + (url))
+        json_data = requests.get(url).json()
+        json_status = json_data["info"]["statuscode"]   
 
   elif json_status == 402:
       print("**********************************************")
