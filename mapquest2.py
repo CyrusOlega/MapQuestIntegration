@@ -20,7 +20,7 @@ while True:
  json_data = requests.get(url).json()
  json_status = json_data["info"]["statuscode"]
 
- print("")
+ print("heaven")
  print("MENU")
  print("1. Trip duration only")
  print("2. Distance only")
