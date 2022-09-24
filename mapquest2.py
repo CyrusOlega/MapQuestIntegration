@@ -3,6 +3,7 @@ import requests
 main_api = "https://www.mapquestapi.com/directions/v2/route?"
 key = "8pZqf042uMGvHGAFMxCssCSCx7z6Znyv"
 routeTypeChoices = ["fastest","shortest","pedestrian","bicycle"]  #Route Type valid choices
+drivingStlyeChoices = ["cautious", "normal", "aggressive"]
 
 print("Welcome to MapQest")                     #Start of program
 print("[1] Go to main program")
@@ -13,16 +14,23 @@ welcomeChoice = int(input("input: "))
 if welcomeChoice == 1:
    orig = input("\nStarting Location: ")        #Starting location Parameter
    dest = input("Destination: ")                #Destination Parameter
-   routeType = input("Route Type [fastest/shortest/pedestrian/bicycle]: ") #Route Type Parameter
+   routeType = input("Route Type (fastest is default) [fastest/shortest/pedestrian/bicycle]: ") #Route Type Parameter
    
    while True:
-      
       if routeType in routeTypeChoices:
          break
       else:
-         routeType = input("\nInvalid input. Please choose one of the options: [fastest/shortest/pedestrian/bicycle]")
+         routeType = input("\nInvalid input. Please choose one of the options: [fastest/shortest/pedestrian/bicycle]: ")
 
-   url = main_api + urllib.parse.urlencode({"key": key, "from":orig, "to":dest, "routeType": routeType})
+   drivingStyle = input("Driving Style (normal is the default) [cautious, normal, aggressive]")
+   
+   while True:
+      if drivingStyle in drivingStlyeChoices:
+         break
+      else:
+         drivingStyle = input("\nInvalid input. Please choose one of the options: [cautious, normal, aggressive]: ")
+         
+   url = main_api + urllib.parse.urlencode({"key": key, "from":orig, "to":dest, "routeType": routeType, "drivingStyle":drivingStyle})
    print("URL: " + (url))
    json_data = requests.get(url).json()
    json_status = json_data["info"]["statuscode"]
