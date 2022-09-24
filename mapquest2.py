@@ -14,13 +14,20 @@ if welcomeChoice == 1:
    orig = input("\nStarting Location: ")        #Starting location Parameter
    dest = input("Destination: ")                #Destination Parameter
    routeType = input("Route Type [fastest/shortest/pedestrian/bicycle]: ") #Route Type Parameter
+   
+   while True:
+      
+      if routeType in routeTypeChoices:
+         break
+      else:
+         routeType = input("\nInvalid input. Please choose one of the options: [fastest/shortest/pedestrian/bicycle]")
 
    url = main_api + urllib.parse.urlencode({"key": key, "from":orig, "to":dest, "routeType": routeType})
    print("URL: " + (url))
    json_data = requests.get(url).json()
    json_status = json_data["info"]["statuscode"]
 
-   while True:
+   while True:                                  #Menu
       print("\n_________MENU_________")
       print("[1] Trip Duration ")
       print("[2] Distance ")
@@ -34,33 +41,33 @@ if welcomeChoice == 1:
       choice = input("Choose One Input only: ")
       
       print("")
-      if choice == "7":
+      if choice == "7":                                                                                        #Quit
          break
-      if choice == "1":  
+      if choice == "1":                                                                                        #Trip Duration Only
          if json_status == 0:
             
             print("Trip Duration: " + (json_data["route"]["formattedTime"]))
             print("")
             print("")
-      if choice == "2":
+      if choice == "2":                                                                                        #Distance Only
          if json_status == 0:
             print("Kilometers: " + str("{:.2f}".format((json_data["route"]["distance"])*1.61)))
             print("")
             print("")
       
-      if choice == "3":
+      if choice == "3":                                                                                        #Fuel only
          if json_status == 0:
             print("Fuel Used (Ltr): " + str("{:.2f}".format((json_data["route"]["fuelUsed"])*3.78)))
             print("")
             print("")
-      if choice == "4":
+      if choice == "4":                                                                                        #Directions Only
          if json_status == 0:
             for each in json_data["route"]["legs"][0]["maneuvers"]:
                print((each["narrative"]) + " (" + str("{:.2f}".format((each["distance"])*1.61) + " km)"))
                print("=============================================\n")
                print("")
                print("")
-      if choice == "5":
+      if choice == "5":                                                                                         #Display All information
          if json_status == 0:
             print("API Status: " + str(json_status) + " = A successful route call.\n")
             print("=============================================")
@@ -75,7 +82,7 @@ if welcomeChoice == 1:
                print("=============================================\n")
                print("")
                print("")
-      if choice == "6":
+      if choice == "6":                                                                                           #Try different location
          if json_status == 0:
                orig = input("Starting Location: ")
                dest = input("Destination: ")
