@@ -2,6 +2,7 @@ import urllib.parse
 import requests
 main_api = "https://www.mapquestapi.com/directions/v2/route?"
 key = "8pZqf042uMGvHGAFMxCssCSCx7z6Znyv"
+routeTypeChoices = ["fastest","shortest","pedestrian","bicycle"]  #Route Type valid choices
 
 print("Welcome to MapQest")                     #Start of program
 print("[1] Go to main program")
@@ -10,10 +11,11 @@ print("[2] Go to Setttings")
 welcomeChoice = int(input("input: "))
 
 if welcomeChoice == 1:
-   orig = input("\nStarting Location: ")
-   dest = input("Destination: ") 
+   orig = input("\nStarting Location: ")        #Starting location Parameter
+   dest = input("Destination: ")                #Destination Parameter
+   routeType = input("Route Type [fastest/shortest/pedestrian/bicycle]: ") #Route Type Parameter
 
-   url = main_api + urllib.parse.urlencode({"key": key, "from":orig, "to":dest, "routeType": "shortest"})
+   url = main_api + urllib.parse.urlencode({"key": key, "from":orig, "to":dest, "routeType": routeType})
    print("URL: " + (url))
    json_data = requests.get(url).json()
    json_status = json_data["info"]["statuscode"]
