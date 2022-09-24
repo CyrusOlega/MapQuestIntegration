@@ -114,4 +114,7 @@ if welcomeChoice == 1:
                print("https://developer.mapquest.com/documentation/directions-api/status-codes")
                print("************************************************************************\n")
 else:
-   print("\nSettings go here")
+   print("\n_________SETTINGS_________")
+   print("[1] Change units for distance")
+   print("[2] Change units for fuel")
+   settingsChoice = input("Input: ")
