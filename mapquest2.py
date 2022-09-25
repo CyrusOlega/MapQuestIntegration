@@ -23,15 +23,20 @@ while True:
          else:
             routeType = input("\nInvalid input. Please choose one of the options: [fastest/shortest/pedestrian/bicycle]: ")
 
-      drivingStyle = input("Driving Style (normal is the default) [cautious, normal, aggressive]")
+      drivingStyle = input("Driving Style (normal is the default) [cautious, normal, aggressive] ")
       
       while True:
          if drivingStyle in drivingStlyeChoices:
             break
          else:
             drivingStyle = input("\nInvalid input. Please choose one of the options: [cautious, normal, aggressive]: ")
-            
-      url = main_api + urllib.parse.urlencode({"key": key, "from":orig, "to":dest, "routeType": routeType, "drivingStyle":drivingStyle})
+      url = main_api + urllib.parse.urlencode({
+         "key": key,
+         "from":orig,
+         "to":dest,
+         "routeType": routeType,
+         "drivingStyle":drivingStyle
+         })
       print("URL: " + (url))
       json_data = requests.get(url).json()
       json_status = json_data["info"]["statuscode"]
@@ -47,7 +52,7 @@ while True:
          print("[7] Quit")
          print("")
          
-         choice = input("Choose One Input only: ")
+         choice = input("Choose one input only: ")
          
          print("")
          if choice == "7":                                                                                        #Quit
