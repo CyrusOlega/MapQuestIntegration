@@ -8,20 +8,21 @@ key = "8pZqf042uMGvHGAFMxCssCSCx7z6Znyv"
 
 def main():
    while True:
-      welcomeChoice = welcomeScreen()
+      welcomeChoice = welcomeScreen()  #Option to go to the Main Program or the Settings
       
       if welcomeChoice == 1:
          while True:
-            orig, dest, unit, routeType, drivingStlye = getParameters()
-            json_data, json_status = urlEncode(orig, dest, unit, routeType, drivingStlye)
+            orig, dest, unit, routeType, drivingStlye = getParameters()                      #Get the parameters needed to make a request
+            json_data, json_status = urlEncode(orig, dest, unit, routeType, drivingStlye)    #Encode the parameters and perform a request,
+                                                                                             #and receive a response.
             
-            if statusIsValid(json_status): #If True
+            if statusIsValid(json_status): #Request validation         
                break
          
-         choice = mainProgram()
-         displayData(orig, dest, json_data, choice)
+         choice = displayOptions()                       #Ask how the data will be displayed
+         displayData(orig, dest, json_data, choice)      #Displays the data
       
-         while True:
+         while True:                                                    #Repeat the program if desired
             tryAgain = input("Try Map Quest Again? [y/n] ").lower()
             if tryAgain == 'y' or tryAgain == 'n':
                print()
@@ -35,7 +36,7 @@ def main():
             continue
          
       elif welcomeChoice == 2:
-         settings()
+         settings()                                         #Go to the settings
       
 def welcomeScreen():
    print("Welcome to MapQest")
@@ -124,7 +125,7 @@ def statusIsValid(json_status):
       
       return False
 
-def mainProgram():
+def displayOptions():
    while True:                                  #Display Options
       print("\n_________Display Options_________")
       print("[1] Trip Duration ")
@@ -184,6 +185,7 @@ def settings():
       print("[2] Change units for fuel")
       print("[3] return to Welcome Screen")
       
+      #settings validation
       while True:
          settingsChoice = int(input("Input: "))
          if settingsChoice not in range(1,4):
@@ -197,6 +199,7 @@ def settings():
          print("[2] Kilometers (k)")
          print("Current unit for Distance: " + config["units"]["Distance"])
          
+         #distance validation
          while True:
             distanceUnit = int(input(""))
             
