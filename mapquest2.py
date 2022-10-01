@@ -2,6 +2,7 @@ import urllib.parse
 import requests
 import sys
 import configparser
+from tabulate import tabulate
 
 main_api = "https://www.mapquestapi.com/directions/v2/route?"
 key = "8pZqf042uMGvHGAFMxCssCSCx7z6Znyv"
@@ -39,10 +40,12 @@ def main():
          settings()                                         #Go to the settings
       
 def welcomeScreen():
-   print("Welcome to MapQest")
+   welcomeScreen = [["Welcome to Mapquest"]]
    while True:
-      print("\n[1] Go to main program")
-      print("[2] Go to Setttings")
+      welcomeScreen.append(["[1] Go to main program"])
+      welcomeScreen.append(["[2] Go to Settings"])
+      
+      print(tabulate(welcomeScreen,tablefmt="pretty"))
       
       welcomeChoice = int(input("input: "))
       
@@ -103,6 +106,7 @@ def urlEncode(orig, dest, unit, routeType, drivingStyle):
    
 def statusIsValid(json_status):
    if json_status == 0:
+      print()
       print("API Status: " + str(json_status) + " = A successful route call.\n")
       return True
    elif json_status == 402:
@@ -127,15 +131,18 @@ def statusIsValid(json_status):
 
 def displayOptions():
    while True:                                  #Display Options
-      print("\n_________Display Options_________")
-      print("[1] Trip Duration ")
-      print("[2] Distance ")
-      print("[3] Fuel used ")
-      print("[4] Directions")
-      print("[5] Display all information")
-      print("[6] Quit")
+      trip=[["__MENU__"],["[1] Trip Duration"],["[2] Distance"],["[3] Fuel used"],["[4] Directions"],
+         ["[5] Display all information"],["[6] Quit"]]
+
+      print(tabulate(trip,tablefmt="pretty"))
       
-      choice = int(input("Choose one input only: "))
+      while True:
+         try:
+            choice = int(input("Choose one input only: "))
+         except ValueError:
+            print("Use integer values only.")
+         else:
+            break
       
       if choice not in range(1, 7):
          print("Invalid Input. Try again.")
@@ -158,20 +165,25 @@ def displayData(orig, dest, json_data, choice):
    elif choice == 3:       #Fuel Only
       print("Fuel Used: " + str("{:.2f} {}".format(fuel, config['units']['fuel'])))
    elif choice == 4:       #Directions Only
+      print()
+      navs=[["Directions"]]
       for each in json_data["route"]["legs"][0]["maneuvers"]:
-         print((each["narrative"]) + " (" + str("{:.2f} {})".format(each["distance"], config["units"]["distance"])))
-         print("=============================================\n")
+         navs.append([(each["narrative"]) + str(": {:.2f} {}".format(each["distance"], config["units"]["distance"]))])
+      print(tabulate(navs,tablefmt="pretty"))
+      
    elif choice == 5:       #Display All
-      print("Directions from " + (orig) + " to " + (dest))
-      print("Trip Duration: " + (json_data["route"]["formattedTime"]))
-      print("Distance Travelled: " + str("{:.2f} {}".format(json_data["route"]["distance"], config["units"]["distance"])))
-      print("Fuel Used ({}): {:.2f}".format(config['units']['fuel'], fuel))
-      print("=============================================")
+      table=[["Directions from " + (orig) + " to " + (dest)],
+      ["Trip Duration: " + (json_data["route"]["formattedTime"])],
+      ["Distance Travelled: " + str("{:.2f} {}".format(json_data["route"]["distance"], config["units"]["distance"]))],
+      ["Fuel Used ({}): {:.2f}".format(config['units']['fuel'], fuel)]]
+      
+      print(tabulate(table,tablefmt="pretty"))
       print()
       
+      navs=[["Directions"]]
       for each in json_data["route"]["legs"][0]["maneuvers"]:
-         print((each["narrative"]) + " (" + str("{:.2f} {})".format(each["distance"], config["units"]["distance"])))
-         print("=============================================\n")
+         navs.append([(each["narrative"]) + str(": {:.2f} {}".format(each["distance"], config["units"]["distance"]))])
+      print(tabulate(navs,tablefmt="pretty"))
    elif choice == 6:
       sys.exit()
 
@@ -180,10 +192,13 @@ def settings():
    config.read('config.ini') #Read config file
    
    while True:
-      print("\n_________SETTINGS_________")
-      print("[1] Change units for distance")
-      print("[2] Change units for fuel")
-      print("[3] return to Welcome Screen")
+      print()
+      settings=[["__SETTINGS__"],
+      ["[1] Change units for distance"],
+      ["[2] Change units for fuel"],
+      ["[3] return to Welcome Screen"]]
+      
+      print(tabulate(settings,tablefmt="pretty"))
       
       #settings validation
       while True:
