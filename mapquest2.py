@@ -87,7 +87,7 @@ def getParameters():
       
    return orig, dest, unit, routeType, drivingStyle
 
-#Encode URL    
+#Encode URL  asdasdasdsd  
 def urlEncode(orig, dest, unit, routeType, drivingStyle):
    url = main_api + urllib.parse.urlencode({ #combine main_api and parameters to create the url 
          "key": key,
