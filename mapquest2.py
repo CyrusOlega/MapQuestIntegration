@@ -50,6 +50,7 @@ def welcomeScreen():
       else:
          return welcomeChoice
 
+
 #Get url parameters
 def getParameters():
    config = configparser.ConfigParser()
