@@ -6,16 +6,19 @@ from tabulate import tabulate
 
 main_api = "https://www.mapquestapi.com/directions/v2/route?"
 key = "8pZqf042uMGvHGAFMxCssCSCx7z6Znyv"
+config = configparser.ConfigParser()
+config.read('config.ini') #Read config file
+unit = config["units"]["distance"]
 
-def main():
+def main():   
    while True:
       welcomeChoice = welcomeScreen()  #Option to go to the Main Program or the Settings
       
       if welcomeChoice == 1:
          while True:
-            orig, dest, unit, routeType, drivingStlye = getParameters()                      #Get the parameters needed to make a request
-            json_data, json_status = urlEncode(orig, dest, unit, routeType, drivingStlye)    #Encode the parameters and perform a request,
-                                                                                             #and receive a response.
+            orig, dest, routeType, drivingStlye = getParameters()                      #Get the parameters needed to make a request
+            json_data, json_status = urlEncode(orig, dest, routeType, drivingStlye)    #Encode the parameters and perform a request,
+                                                                                       #and receive a response.
             
             if statusIsValid(json_status): #Request validation         
                break
@@ -56,11 +59,6 @@ def welcomeScreen():
 
 #Get url parameters
 def getParameters():
-   config = configparser.ConfigParser()
-   config.read('config.ini') #Read config file
-   
-   unit = config["units"]["distance"]
-   
    routeTypeChoices = ["fastest","shortest","pedestrian","bicycle"]  #Route Type valid choices
    drivingStlyeChoices = ["cautious", "normal", "aggressive"]        #Driving Style valid choices
    
@@ -85,10 +83,12 @@ def getParameters():
       else:
          drivingStyle = input("\nInvalid input. Please choose one of the options: [cautious, normal, aggressive]: ")
       
-   return orig, dest, unit, routeType, drivingStyle
+   return orig, dest, routeType, drivingStyle
 
 #Encode URL  asdasdasdsd  
-def urlEncode(orig, dest, unit, routeType, drivingStyle):
+def urlEncode(orig, dest, routeType, drivingStyle):
+   global unit
+   
    url = main_api + urllib.parse.urlencode({ #combine main_api and parameters to create the url 
          "key": key,
          "from":orig,
@@ -131,8 +131,8 @@ def statusIsValid(json_status):
 
 def displayOptions():
    while True:                                  #Display Options
-      trip=[["__MENU__"],["[1] Trip Duration"],["[2] Distance"],["[3] Fuel used"],["[4] Directions"],
-         ["[5] Display all information"],["[6] Quit"]]
+      trip=[["__MENU__"],["[1] Trip Duration"],["[2] Distance"],["[3] Directions"],
+         ["[4] Display all information"],["[5] Quit"]]
 
       print(tabulate(trip,tablefmt="pretty"))
       
@@ -144,7 +144,7 @@ def displayOptions():
          else:
             break
       
-      if choice not in range(1, 7):
+      if choice not in range(1, 6):
          print("Invalid Input. Try again.")
       else:
          return choice
@@ -153,29 +153,21 @@ def displayData(orig, dest, json_data, choice):
    config = configparser.ConfigParser()
    config.read('config.ini') #Read config file
    
-   if config['units']['fuel'] == 'liters':
-      fuel = json_data["route"]["fuelUsed"]*3.78
-   else:
-      fuel = json_data["route"]["fuelUsed"]
-   
    if choice == 1:         #Trip Duration Only
       print("Trip Duration: " + (json_data["route"]["formattedTime"]))
    elif choice == 2:       #Distance Only
        print("Distance Travelled: {} {}".format(str((json_data["route"]["distance"])), config["units"]["distance"]))
-   elif choice == 3:       #Fuel Only
-      print("Fuel Used: " + str("{:.2f} {}".format(fuel, config['units']['fuel'])))
-   elif choice == 4:       #Directions Only
+   elif choice == 3:       #Directions Only
       print()
       navs=[["Directions"]]
       for each in json_data["route"]["legs"][0]["maneuvers"]:
          navs.append([(each["narrative"]) + str(": {:.2f} {}".format(each["distance"], config["units"]["distance"]))])
       print(tabulate(navs,tablefmt="pretty"))
       
-   elif choice == 5:       #Display All
+   elif choice == 4:       #Display All
       table=[["Directions from " + (orig) + " to " + (dest)],
       ["Trip Duration: " + (json_data["route"]["formattedTime"])],
-      ["Distance Travelled: " + str("{:.2f} {}".format(json_data["route"]["distance"], config["units"]["distance"]))],
-      ["Fuel Used ({}): {:.2f}".format(config['units']['fuel'], fuel)]]
+      ["Distance Travelled: " + str("{:.2f} {}".format(json_data["route"]["distance"], config["units"]["distance"]))]]
       
       print(tabulate(table,tablefmt="pretty"))
       print()
@@ -188,22 +180,18 @@ def displayData(orig, dest, json_data, choice):
       sys.exit()
 
 def settings():
-   config = configparser.ConfigParser()
-   config.read('config.ini') #Read config file
-   
    while True:
       print()
       settings=[["__SETTINGS__"],
       ["[1] Change units for distance"],
-      ["[2] Change units for fuel"],
-      ["[3] return to Welcome Screen"]]
+      ["[2] return to Welcome Screen"]]
       
       print(tabulate(settings,tablefmt="pretty"))
       
       #settings validation
       while True:
          settingsChoice = int(input("Input: "))
-         if settingsChoice not in range(1,4):
+         if settingsChoice not in range(1,3):
             print("Invalid input. Try again.")
          else:
             break
@@ -232,32 +220,9 @@ def settings():
             config.write(configfile)
          
          print("Settings updated.\n")
-            
       elif settingsChoice == 2:
-         print("\nChange unit for fuel to:")
-         print("[1] Gallons")
-         print("[2] Liters")
-         print("Current unit for Fuel: " + config["units"]["Fuel"])
-         
-         while True:
-            fuelUnit = int(input(""))
-            
-            if fuelUnit not in range(1,3):
-               print("Invalid Input. Try again")
-            else:
-               break
-               
-         if fuelUnit == 1:
-            config.set('units','Fuel','gallons')
-         elif fuelUnit == 2:
-            config.set('units','Fuel','liters')
-         
-         with open('config.ini', 'w') as configfile: #Write new settings to config file
-            config.write(configfile)
-      
-         print("Settings updated.\n")
-      elif settingsChoice == 3:
          print()
          break
 
-main()  
+if __name__ == '__main__':
+   main()
