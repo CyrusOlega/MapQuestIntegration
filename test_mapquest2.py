@@ -2,6 +2,7 @@ import mapquest2
 import pytest
 import requests
 
+
 @pytest.fixture
 def json_data():
     json_data, json_status = mapquest2.urlEncode('Washington, D.C.', 'Baltimore, Md', 'fastest', 'normal')
