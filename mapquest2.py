@@ -3,6 +3,7 @@ import requests
 import sys
 import configparser
 from tabulate import tabulate
+from datetime import datetime
 
 main_api = "https://www.mapquestapi.com/directions/v2/route?"
 key = "8pZqf042uMGvHGAFMxCssCSCx7z6Znyv"
@@ -85,10 +86,8 @@ def getParameters():
       
    return orig, dest, routeType, drivingStyle
 
-#Encode URL  asdasdasdsd  
-def urlEncode(orig, dest, routeType, drivingStyle):
-   global unit
-   
+#Encode URL
+def urlEncode(orig, dest, routeType, drivingStyle):   
    url = main_api + urllib.parse.urlencode({ #combine main_api and parameters to create the url 
          "key": key,
          "from":orig,
@@ -153,8 +152,22 @@ def displayData(orig, dest, json_data, choice):
    config = configparser.ConfigParser()
    config.read('config.ini') #Read config file
    
+   #Covnert Time to DD:HH:MM:SS
+   raw_duration = json_data["route"]["formattedTime"]
+   nums = raw_duration.split(':')
+   days = 0
+   hrs = int(nums[0])
+   mins = int(nums[1])
+   secs = int(nums[2])
+   
+   if hrs > 24:
+      days = int(hrs/24)
+      hrs = hrs - (days*24)
+   
+   converted_time = str('{} day/s, {}:{}:{}'.format(days, hrs, mins, secs))
+   
    if choice == 1:         #Trip Duration Only
-      print("Trip Duration: " + (json_data["route"]["formattedTime"]))
+      print("Trip Duration: " + (converted_time))
    elif choice == 2:       #Distance Only
        print("Distance Travelled: {} {}".format(str((json_data["route"]["distance"])), config["units"]["distance"]))
    elif choice == 3:       #Directions Only
@@ -166,7 +179,7 @@ def displayData(orig, dest, json_data, choice):
       
    elif choice == 4:       #Display All
       table=[["Directions from " + (orig) + " to " + (dest)],
-      ["Trip Duration: " + (json_data["route"]["formattedTime"])],
+      ["Trip Duration: " + (converted_time)],
       ["Distance Travelled: " + str("{:.2f} {}".format(json_data["route"]["distance"], config["units"]["distance"]))]]
       
       print(tabulate(table,tablefmt="pretty"))
@@ -176,7 +189,7 @@ def displayData(orig, dest, json_data, choice):
       for each in json_data["route"]["legs"][0]["maneuvers"]:
          navs.append([(each["narrative"]) + str(": {:.2f} {}".format(each["distance"], config["units"]["distance"]))])
       print(tabulate(navs,tablefmt="pretty"))
-   elif choice == 6:
+   elif choice == 5:
       sys.exit()
 
 def settings():
@@ -222,7 +235,7 @@ def settings():
          print("Settings updated.\n")
       elif settingsChoice == 2:
          print()
-         break
-
+         break 
+   
 if __name__ == '__main__':
    main()
